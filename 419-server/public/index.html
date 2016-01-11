@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+<head>
+  <title>
+    List Editor
+  </title>
+  <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+  </head>
+<body>
+<div class="container" ng-controller="AppCtrl">
+  <h1>List Editor</h1>
+  Search: <input ng-model ="query" type ="text"/>
+  <table class="table table-condensed">
+    <thead>
+      <th>Category</th>
+      <th>Action</th>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <input class="form-control" ng-model="category.name" ng-keyup="addCategoryOnEnter()">
+        <td>
+            <button type="button" class="btn btn-primary" ng-disabled="!category.name" ng-click="addCategory()" >Add</button>
+            <button type="button" class="btn btn-info" ng-disabled="!category.name" ng-click="clearInput()">Clear</button>
+        </td>
+      </tr>
+      <tr ng-repeat="category in categories | filter:query | orderBy:'name'" ng-include="getTemplate(category)">
+        <script type="text/ng-template" id="edit">
+        <td>
+          <input class="form-control" type="text" ng-model="category.name" ng-keyup="updateCategoryOnEnter">
+        </td>
+        <td>
+          <button type="button" class="btn btn-info"  ng-click="updateCategory(category._id)">Save</button>
+        </td>
+        </script>
+        <script type="text/ng-template" id="display">
+        <td>
+          {{category.name }}
+        </td>
+        <td>
+          <button type="button" class="btn btn-info" ng-click="editCategory(category)">Edit</button>
+          <button type="button" class="btn btn-danger" ng-click="removeCategory(category._id)">Delete</button>
+        </td>
+        </script>
+      </tr>
+    </tbody>
+  </table>
+</div>
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
+<script src="/controllers/categoryController.js"></script>
+</html>
