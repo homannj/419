@@ -2,6 +2,9 @@
 
 ## Server Notes
 
+### Production URL:
+http://ec2-54-153-28-110.us-west-1.compute.amazonaws.com:3000/
+
 ### How to run the production server:
 1. SSH into prod.
 2. Go to the server folder.
