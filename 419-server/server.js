@@ -13,6 +13,7 @@ const db = mongoose.connection;
 db.on('error', () => console.log ('error connecting to MongoDB'));
 db.once('open', () => {
   console.log('Connected to MongoDB');
+  
   // Express
   const app = express();
   require('./config/passport')(passport);
@@ -23,11 +24,14 @@ db.once('open', () => {
   app.set('view engine', 'ejs');
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(bodyParser.json());
+  
   // Routes
   require('./routes/routes.js')(app, passport);
   app.use('/api', require('./routes/api'));
   app.use (express.static(__dirname+'/public'));
+  
   // Start server
-  app.listen(3000);
-  console.log('API is running on port 3000');
+  var port = (process.env.NODE_ENV ? 3000 : 8080)
+  app.listen(port);
+  console.log('API is running on port ' + port);
 });
