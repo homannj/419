@@ -26,7 +26,6 @@ db.once('open', () => {
   app.use(bodyParser.json());
   
   // Routes
-  require('./routes/routes.js')(app, passport);
   app.use('/api', require('./routes/api'));
   app.use (express.static(__dirname+'/public'));
   
