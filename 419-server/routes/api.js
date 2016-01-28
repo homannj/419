@@ -7,6 +7,8 @@ const router = express.Router();
 const ReuseCategories = require('../models/reuseCategories');
 const RepairCategories = require('../models/repairCategories');
 const Businesses = require('../models/businesses');
+const Users = require('../models/users');
+
 // Routes
 Businesses.methods(['get', 'put', 'post', 'delete']);
 Businesses.register(router, '/businesses');
@@ -25,7 +27,8 @@ RepairCategories.route('businesses', {
     }
 });
 RepairCategories.register(router, '/repairCategories');
-
+Users.methods(['get']);
+Users.register(router, '/users');
 
 // Return router
 module.exports = router;
