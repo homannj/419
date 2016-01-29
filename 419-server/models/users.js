@@ -3,33 +3,27 @@ const restful = require("node-restful");
 const mongoose = restful.mongoose;
 const bcrypt   = require('bcrypt-nodejs');
 
-// Export model
-module.exports = restful.model('Users',
-    new mongoose.Schema({
-        email: {
-            type: String,
-            required: true,
-            unique: true,
-            dropDups: true
-        },
-        passwordhash: {
-            type: String,
-            required: true
-        },
-        isSuperAdmin: Boolean
-    }), 'Users'
-);
+var uSchema = new mongoose.Schema({
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        dropDups: true
+    },
+    passwordHash: {
+        type: String,
+        required: true
+    },
+    isSuperAdmin: {
+        type: Boolean,
+        required: true
+    }
+});
 
-// methods ======================
-// generating a hash
-// userSchema.methods.generateHash = function(password) {
-//     return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
-// };
+// Check if password is valid
+uSchema.methods.validPassword = function(password) {
+    return bcrypt.compareSync(password, this.local.password);
+};
 
-// checking if password is valid
-// userSchema.methods.validPassword = function(password) {
-//     return bcrypt.compareSync(password, this.local.password);
-// };
-
-// create the model for users and expose it to our app
-// module.exports = mongoose.model('User', userSchema);
+// Create the model for users and expose it to our app
+module.exports = restful.model('Users', uSchema, 'Users');
