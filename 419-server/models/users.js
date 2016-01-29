@@ -22,7 +22,7 @@ var uSchema = new mongoose.Schema({
 
 // Check if password is valid
 uSchema.methods.validPassword = function(password) {
-    return bcrypt.compareSync(password, this.local.password);
+    return bcrypt.compareSync(password, this.passwordHash);
 };
 
 // Create the model for users and expose it to our app

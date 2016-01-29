@@ -46,7 +46,7 @@ Users.route('authenticate.post', function(req, res, next) {
         return;
       }
       else if (user) {
-        if (user.password != userInfo.password) {
+        if (!user.validPassword(userInfo.passwordHash)) {
           res.json({success: false, message: 'Authentication failed. Wrong password.'})
         } 
         else {
