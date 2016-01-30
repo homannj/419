@@ -16,6 +16,7 @@
     "mongoose": "^4.3.4",
     "node-restful": "^0.2.4",
     "connect-flash" : "~0.1.1",
-    "bcrypt-nodejs" : "latest"
+    "bcrypt-nodejs" : "latest",
+    "cors" : "2.7.1"
   }
 }

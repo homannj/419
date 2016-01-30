@@ -5,6 +5,8 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const expressSession = require('express-session');
 const flash = require('connect-flash');
+var cors = require("cors");
+
 // Database connect
 const database = require('./config/database');
 mongoose.connect(database.url);
@@ -19,6 +21,7 @@ db.once('open', () => {
   app.use(flash());
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(bodyParser.json());
+  app.use(cors());
   
   // Routes
   app.use('/api', require('./routes/api'));
