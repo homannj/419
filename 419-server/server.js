@@ -3,7 +3,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const passport = require('passport');
 const expressSession = require('express-session');
 const flash = require('connect-flash');
 // Database connect
@@ -16,12 +15,8 @@ db.once('open', () => {
   
   // Express
   const app = express();
-  require('./config/passport')(passport);
-  app.use(expressSession({secret: 'mySecretKey'}));
-  app.use(passport.initialize());
-  app.use(passport.session());
+  // app.use(expressSession({secret: 'mySecretKey'}));
   app.use(flash());
-  app.set('view engine', 'ejs');
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(bodyParser.json());
   

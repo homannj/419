@@ -29,8 +29,9 @@ RepairCategories.route('businesses', {
 });
 RepairCategories.register(router, '/repairCategories');
 
-Users.methods(['get', 'post']);
+Users.methods(['get', 'post', 'put', 'delete']);
 Users.before('post', generateHash);
+Users.before('put', generateHash);
 Users.route('authenticate.post', function(req, res, next) {
     var userInfo = new Users(req.body);
     Users.findOne({ 'email': userInfo.email }, function(err, user) {
@@ -73,6 +74,11 @@ Users.route('authenticate.post', function(req, res, next) {
       }
     })
   });
+  
+Users.after('delete', function(req, res, next) {
+  res.json({success: true});
+  next();
+});
 Users.register(router, '/users');
 
 function generateHash(req, res, next) {
