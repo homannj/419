@@ -17,6 +17,7 @@
     "node-restful": "^0.2.4",
     "connect-flash" : "~0.1.1",
     "bcrypt-nodejs" : "latest",
-    "cors" : "2.7.1"
+    "cors" : "2.7.1",
+    "node-geocoder": "3.6.2"
   }
 }

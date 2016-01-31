@@ -12,7 +12,9 @@ const Users = require('../models/users');
 
 // Routes
 Businesses.methods(['get', 'put', 'post', 'delete']);
+Businesses.before('post', checkGeoLocation);
 Businesses.register(router, '/businesses');
+
 ReuseCategories.methods(['get', 'put', 'post', 'delete']);
 ReuseCategories.register(router, '/reuseCategories');
 RepairCategories.methods(['get', 'put', 'post', 'delete']);
@@ -85,6 +87,35 @@ function generateHash(req, res, next) {
   req.body.passwordHash = bcrypt.hashSync(req.body.passwordHash, bcrypt.genSaltSync(8), null);
   next(); 
 };
+
+// Google Geolocation Setup
+var geoCoderProvider = 'google';
+var geoCoder = require('node-geocoder')(geoCoderProvider);
+
+function checkGeoLocation(req, res, next) {
+  var businessInfo = new Businesses(req.body);
+  var completeAddress = businessInfo.address + ',' + businessInfo.city + ',' + businessInfo.state + ',' + businessInfo.zip;
+  
+  // If there is no location data, try to find it.
+  if (businessInfo.location.coordinates.length == 0) {
+    geoCoder.geocode(completeAddress)
+    .then(function(res) {
+      // Get geolocation data if no location property was found or coordinates arr is empty
+      if (!req.body.hasOwnProperty("location") || (req.body.location.hasOwnProperty("coordinates") && req.body.location.coordinates.length == 0)) {
+        req.body["location"] = {type: 'Point', coordinates: []};
+        req.body.location.coordinates.push(res[0].longitude);
+        req.body.location.coordinates.push(res[0].latitude);
+        next();
+      }
+      else {
+        next();
+      }
+    })
+    .catch(function(err) {
+        console.log(err);
+    });
+  }
+}
 
 // Return router
 module.exports = router;
