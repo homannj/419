@@ -169,3 +169,24 @@ db.Businesses.insert ([
     "notes": "full resoles, elastic and velcros, sewing and patching, leather patches, zippers, half soles and heels."
   }
 ])
+
+// Add new fields  
+// db.Businesses.update(
+//   {}, 
+//   { $set: { "location.coordinates" : [], "location.type" : "Point" } }, 
+//   {
+//     multi: true
+//   }
+// )
+
+// Populate fields from old singlar long and lat fields
+// db.Businesses.find().forEach(
+//   function(elem) {
+//     elem.location.coordinates.push(elem.longitude);
+//     elem.location.coordinates.push(elem.latitude);
+//     db.Businesses.save(elem);
+//   }
+// )
+
+// Remove the long and lat fields
+// db.Businesses.update({}, { $unset : {latitude: "", longitude: ""} }, {multi: true})
