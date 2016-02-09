@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html ng-app = "cscApp">
+<head>
+  <!-- load bootstrap and fontawesome via CDN -->
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.css" />
+  <!-- load angular and angular route via CDN -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular.min.js"></script>
+      <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular-route.js"></script>
+  <script src="/controllers/main.js"></script>
+</head>
+<body>
+
+    <!-- HEADER AND NAVBAR -->
+    <header>
+        <nav class="navbar navbar-default">
+        <div class="container">
+            <div class="navbar-header">
+                <img src="http://sustainablecorvallis.org/wp-content/uploads/2014/07/header_new3.png">
+            </div>
+            <div class="navbar-header">
+              <h1>&nbspReuse Directory</h1>
+            </div>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#"><i class="fa fa-building fa-3x"></i><br>Businesses</a></li>
+                <li><a href="#categories"><i class="fa fa-list-alt fa-3x"></i><br>Categories</a></li>
+                <li><a href="#users"><i class="fa fa-user fa-3x"></i><br>Users</a></li>
+                <li><a href="/logout"><i class="fa fa-sign-out fa-3x"></i><br>Log out</a></li>
+            </ul>
+        </div>
+        </nav>
+    </header>
+
+    <!-- MAIN CONTENT AND INJECTED VIEWS -->
+    <body ng-controller="mainController">
+      <div id="main">
+          <div ng-view></div>
+      </div>
+
+</body>
+</html>
