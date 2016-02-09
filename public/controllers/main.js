@@ -12,19 +12,33 @@ cscApp.config(function($routeProvider) {
           templateUrl : 'categories.html',
           controller  : 'categoryController'
       })
+      .when('/users', {
+          templateUrl : 'users.html',
+          controller  : 'userController'
+      })
+      .when('/login', {
+          templateUrl : 'login.html',
+          controller : 'loginController'
+      })
 });
 
 // create the controller and inject Angular's $scope
 cscApp.controller('mainController', function($scope) {
 });
 
+cscApp.controller('loginController', function($scope, $http) {
+    $scope.loginUser = () => {
+        console.log('loginUser');
+        $http.post(apiUrl + '/authenticate', $scope.email, $scope.password).then(
+
 cscApp.controller('businessController', function($scope, $http) {
   function init () {
-    $http.get(apiUrl + '/reuse').success(response => {
+      console.log('in init');
+    $http.get(apiUrl + '/reuseCategories').success(response => {
       $scope.categories = response;
       console.log(response);
     });
-    $http.get(apiUrl + '/repair').success(response => {
+    $http.get(apiUrl + '/repairCategories').success(response => {
       $scope.repairCategories = response;
       console.log(response);
     });
@@ -35,6 +49,7 @@ cscApp.controller('businessController', function($scope, $http) {
     $scope.showAddPanel = false;
   }
   let refresh = () => {
+      console.log('in refresh');
     $http.get(apiUrl + '/businesses').success((response)=>{
       $scope.businesses = response;
       $scope.clearNewBusiness();
@@ -94,7 +109,7 @@ cscApp.controller('businessController', function($scope, $http) {
       $scope.editReuseCategories = $scope.selectedBusiness.reuseCategories.slice(0);;
       $scope.editRepairCategories = $scope.selectedBusiness.repairCategories.slice(0);;
   };
-  function validate(business, errorMessage) {
+  function validate(businesj, errorMessage) {
       return true;
       console.log('validating');
       console.log(business);
@@ -237,3 +252,124 @@ cscApp.controller('categoryController', function($scope, $http) {
         return true;
       }
 });
+
+cscApp.controller('userController', function($scope, $http) {
+    console.log("in controller");
+  function init () {
+      console.log('in init');
+    $http.get(apiUrl + '/users').success(response => {
+      $scope.users = response;
+      console.log(response);
+    });
+    $scope.newUser = [];
+    $scope.editUser = [];
+    $scope.showAddPanel = false;
+  }
+  let refresh = () => {
+      console.log('in refresh');
+    $http.get(apiUrl + '/users').success((response)=>{
+      $scope.users = response;
+      $scope.clearNewUser();
+      $scope.selectedUser = {};
+      console.log(response);
+    });
+  }
+  init();
+  refresh();
+  $scope.addUser = () => {
+    console.log('addUser');
+    $scope.invalidAdd = {
+      email : '',
+      password :'',
+      isSuperAdmin :'FALSE'
+    }
+    //if (validate ($scope.newBusiness,$scope.invalidAdd) == true)
+      $http.post(apiUrl + '/users', $scope.newUser).then((success) => refresh());
+  }
+  $scope.updateUser = () => {
+    $scope.selectedUser.email = $scope.editEmail;
+    $scope.selectedUser.password = $scope.editPassword;
+    $scope.selectedUser.isSuperAdmin = $scope.editIsSuperAdmin;
+    console.log ('updating');
+    console.log ($scope.selectedUser);
+    //console.log($scope.editReuseCategories.slice(0));
+        //if (validate($scope.selectedBusiness, $scope.invalid) == true)
+          $http.put(apiUrl + '/users/'+$scope.selectedUser._id, $scope.selectedUser).then((success) => refresh());
+  }
+  $scope.removeBusiness = id => {
+    console.log(id);
+    $http.delete(apiUrl + '/users/'+id).then((success) => refresh());
+    refresh();
+  }
+  $scope.clearNewUser = () => {
+    $scope.newUser = {
+      email : "",
+      password : "",
+      isSuperAdmin : false,
+    };
+  }
+  $scope.getTemplate = user => {
+    try {
+      if (user._id === $scope.selectedUser._id) return 'edit';
+      else return 'display';
+    } catch (e) {return 'display';}
+  };
+  $scope.editUser = user => {
+    $scope.invalid = {
+      email : "",
+      password : "",
+      isSuperAdmin : false,
+    }
+    console.log('edit clicked');
+      $scope.selectedUser = angular.copy(user);
+  };
+  function validate(business, errorMessage) {
+      return true;
+      console.log('validating');
+      console.log(user);
+      errorMessage.email = '';
+      errorMessage.password = '';
+      errorMessage.isSuperAdmin = false; 
+
+      let returnValue = true;
+      if (user.email == '') {
+        errorMessage.email = 'Email cannot be blank.';
+        returnValue = false;
+      }
+      //const url = /http?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/
+      //if(url.test(business.website) == false){
+      //  errorMessage.website = 'Must be a valid url beginning with http://';
+      //  returnValue = false;
+      //}
+      for (let u of $scope.users) {
+        if (user._id == u._id)
+          continue;
+        if (user.email == u.email) {
+          errorMessage.email = u.email +' is already in the database.';
+          returnValue = false;
+        }
+      }
+      return returnValue;
+  }
+
+  //$scope.addCategory =  (selected, collection) => {
+  //  console.log(selected);
+  //  console.log(collection);
+  //      for (let item of collection)
+  //        if (item == selected)
+  //          return;
+  //      collection.push (selected);
+  //      console.log(collection);
+  //}
+  //$scope.removeCategory = (selected, collection) => {
+  //  for(let i = 0; i < collection.length; i++) {
+  //      if(collection[i] == selected) {
+  //          collection.splice(i, 1);
+  //          break;
+  //      }
+  //  }
+  //  console.log(collection);
+  //}
+});
+
+
