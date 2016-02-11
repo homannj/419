@@ -29,7 +29,13 @@ cscApp.controller('mainController', function($scope) {
 cscApp.controller('loginController', function($scope, $http) {
     $scope.loginUser = () => {
         console.log('loginUser');
-        $http.post(apiUrl + '/authenticate', $scope.email, $scope.password).then(
+        $http.post(apiUrl + '/authenticate', $scope.email, $scope.password)
+            .then((success) => {
+                $window.location.href = 'main.html/';
+            });
+    }
+});
+
 
 cscApp.controller('businessController', function($scope, $http) {
   function init () {
@@ -61,6 +67,7 @@ cscApp.controller('businessController', function($scope, $http) {
   refresh();
   $scope.addBusiness = () => {
     console.log('addBusiness');
+    console.log($scope.newBusiness);
     $scope.invalidAdd = {
       name : '',
       phone :'',
@@ -175,6 +182,7 @@ cscApp.controller('categoryController', function($scope, $http) {
         $http.get(apiUrl + '/reuseCategories').success( response => {
           $scope.reuseCategories = response;
           $scope.newReuse = "";
+          $scope.newReuseItems= [];
           $scope.selectedReuse = {};
           $scope.addReuseError = {};
           $scope.editReuseError = {};
@@ -183,6 +191,7 @@ cscApp.controller('categoryController', function($scope, $http) {
         $http.get(apiUrl + '/repairCategories').success(response => {
           $scope.repairCategories = response;
           $scope.newRepair = "";
+          $scope.newRepairItems= [];
           $scope.selectedRepair = {};
           $scope.addRepairError = {};
           $scope.editRepairError = {};
@@ -191,6 +200,10 @@ cscApp.controller('categoryController', function($scope, $http) {
       }
       refresh();
       $scope.addReuse =  () => {
+          addItem(selectedNewReuse, newReuseItems);
+        console.log('in addReuse');
+        console.log($scope.newReuseItems);
+        $scope.newReuse.item = $scope.newReuseItems.slice(0);
         if (validate({name : $scope.newReuse}, $scope.reuseCategories, $scope.addReuseError) == true)
           $http.post(apiUrl + '/reuseCategories', {name : $scope.newReuse}).then((success) => refresh());
       }
@@ -215,8 +228,12 @@ cscApp.controller('categoryController', function($scope, $http) {
       };
       ////////////REPAIR///////////////
       $scope.addRepair =  () => {
+        console.log('in addRepair');
+        console.log($scope.newRepairItems);
+        //$scope.newRepair.item = $scope.newRepairItems.slice(0);
+        //$scope.newRepair.item = $scope.addRepairItem.newRepairItems;
         if (validate({name : $scope.newRepair}, $scope.repairCategories, $scope.addRepairError) == true)
-          $http.post(apiUrl + '/repairCategories', {name : $scope.newRepair}).then((success) => refresh());
+          $http.post(apiUrl + '/repairCategories', {name : $scope.newRepair, item : $scope.newRepairItems}).then((success) => refresh());
       }
       $scope.updateRepair = id => {
         if (validate($scope.selectedRepair, $scope.repairCategories, $scope.editRepairError) == true)
@@ -251,6 +268,25 @@ cscApp.controller('categoryController', function($scope, $http) {
         }
         return true;
       }
+    //$scope.addItem =  (newItem, collection) => {
+    $scope.addRepairItem =  (newItem, collection) => {
+        console.log(newItem);
+        console.log(collection);
+        for (let item of collection)
+          if (item == newItem)
+            return;
+        collection.push (newItem);
+        console.log(collection);
+    }
+    $scope.removeItem = (newItem, collection) => {
+        for(let i = 0; i < collection.length; i++) {
+            if(collection[i] == newItem) {
+                collection.splice(i, 1);
+                break;
+            }
+        }
+        console.log(collection);
+    }
 });
 
 cscApp.controller('userController', function($scope, $http) {

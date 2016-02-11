@@ -6,9 +6,13 @@
 <div class="panel">
   <div class="panel">
       <label>New Reuse Category:</label><input class="form-control" type="text" ng-model="newReuse">
-      <button  class="btn btn-info" ng-click="addReuse()">Add</button>&nbsp<span class="errorText">{{addReuseError.text}}</span>
+      <label>Items:</label><input class="form-control" type="text"
+      ng-model="selectedNewReuseItem" >
+      <button  class="btn btn-info" ng-click="addReuseItem(selectedNewReuseItem,
+          newReuseItems)">Add Item</button><span class="errorText">{{addRepairError.text}}</span>
+      <button  class="btn btn-info" ng-click="addReuse()">Add</button><span class="errorText">{{addReuseError.text}}</span>
   </div>
-<table <table class="table table-striped table-bordered table-hover table-condensed">
+<table class="table table-striped table-bordered table-hover table-condensed">
   <thead>
     <td>Reuse Categories:</td>
     <td>Actions:</td>
@@ -17,6 +21,11 @@
     <script type="text/ng-template" id="display">
     <td>
       {{reuse.name}}
+        <ul>
+            <li ng-repeat="item in items">
+                {{item}}
+            </li>
+        </ul>
     </td>
     <td>
       <button  class="btn btn-success" ng-click="editReuse(reuse)">Edit</button>
@@ -36,9 +45,13 @@
 </div><div class="panel">
   <div class="panel">
       <label>New Repair Category:</label><input class="form-control" type="text" ng-model="newRepair">
-      <button  class="btn btn-info" ng-click="addRepair()">Add</button>&nbsp<span class="errorText">{{addRepairError.text}}</span>
+      <label>Items:</label><input class="form-control" type="text"
+      ng-model="selectedNewRepairItem">
+      <button  class="btn btn-info" ng-click="addRepairItem(selectedNewRepairItem,
+          newRepairItems)">Add Item</button><span class="errorText">{{addRepairError.text}}</span>
+      <button  class="btn btn-info" ng-click="addRepair()">Save Category</button><span class="errorText">{{addRepairError.text}}</span>
   </div>
-  <table <table class="table table-striped table-bordered table-hover table-condensed">
+  <table class="table table-striped table-bordered table-hover table-condensed">
     <thead>
       <td>Reuse Categories:</td>
       <td>Actions:</td>
@@ -47,6 +60,11 @@
       <script type="text/ng-template" id="displayRepair">
       <td>
         {{repair.name}}
+        <ul>
+            <li ng-repeat="item in items">
+                {{item}}
+            </li>
+        </ul>
       </td>
       <td>
         <button  class="btn btn-success" ng-click="editRepair(repair)">Edit</button>

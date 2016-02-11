@@ -1,4 +1,3 @@
-<!-- views/login.ejs -->
 <!doctype html>
 <html>
 <head>
@@ -10,29 +9,23 @@
     </style>
 </head>
 <body>
-<div class="container">
-
+<div class="container" ng-controller="loginController">
 <div class="col-sm-6 col-sm-offset-3">
 
-    <h1><span class="fa fa-sign-in"></span> Login</h1>
-
-    <!-- show any messages that come back with authentication -->
-    <% if (message.length > 0) { %>
-        <div class="alert alert-danger"><%= message %></div>
-    <% } %>
-
-    <!-- LOGIN FORM -->
-    <form action="http://ec2-54-153-28-110.us-west-1.compute.amazonaws.com:3000/login" method="post">
+   <!--form
+   action="http://ec2-54-153-28-110.us-west-1.compute.amazonaws.com:3000/login"
+   method="post" -->
         <div class="form-group">
             <label>Email</label>
-            <input type="text" class="form-control" name="email">
+            <input type="text" class="form-control" name="email"
+            ng-model="login.email">
         </div>
         <div class="form-group">
             <label>Password</label>
-            <input type="password" class="form-control" name="password">
+            <input type="password" class="form-control" name="password"
+            ng-model="login.password">
         </div>
-
-        <button type="submit" class="btn btn-warning btn-lg">Login</button>
+        <button class="btn btn-warning btn-lg" ng-click="loginUser(login)">Login</button>
     </form>
 
     <hr>
