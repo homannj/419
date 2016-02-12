@@ -7,6 +7,7 @@ const mongoose = restful.mongoose;
 module.exports = restful.model('ReuseCategories',
   new mongoose.Schema({
     name : String,
+    item : [String],
     description : Array
   }), 'ReuseCategories'
 );
