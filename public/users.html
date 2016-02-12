@@ -7,9 +7,6 @@
     <div class = "panel">
         <label>Email:</label><input class="form-control" type="text"
         ng-model="newUser.email"><span class="errorText">{{invalidAdd.name}}</span>
-        <label>Password:</label><input class="form-control" type="password"
-        ng-model="newUser.password"><span
-            class="errorText">{{invalidAdd.password}}</span>
         <label>SuperAdmin:</label>
         <input class="radio-inline" type="radio"ng-model="newUser.isSuperAdmin" ng-value="true">
             <label>Yes</label>
@@ -28,8 +25,8 @@
 <label>Filter By Admin<input ng-model="search.isSuperAdmin"></label>
   <table class="table table-striped table-bordered table-hover table-condensed">
     <thead>
-      <td colspan="2">Email</td>
-      <td>Password</td>
+        <!--td colspan="2">Email</td> -->
+      <td>Email</td>
       <td>SuperAdmin Status</td>
       <td>Actions</td>
     </thead>
@@ -37,7 +34,6 @@
       <tr ng-repeat="user in users | filter:search" ng-include="getTemplate(user)">
         <script type="text/ng-template" id="display">
         <td>{{user.email}}</td>
-        <td>{{user.password}}</td>
         <td>{{user.isSuperAdmin}}</td>
         <td>
           <button  class="btn btn-success" ng-click="editUser(user)">Edit</button>
@@ -48,10 +44,6 @@
             <td>
                 <input class="form-control" type="text"
                 ng-model="selectedUser.email"><span class="errorText">{{invalidAdd.name}}</span>
-            </td>
-            <td>
-                <input class="form-control" type="password"
-                ng-model="selectedUser.password"><span class="errorText">{{invalidAdd.name}}</span>
             </td>
             <td>
                 <label>SuperAdmin:</label></br>

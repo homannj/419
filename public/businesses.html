@@ -88,6 +88,7 @@
 <div ng-hide="showAddPanel">
     <button  class="btn btn-info" ng-click="showAddPanel = true">Add A Business</button>
 </div>
+  <label>Filter<input ng-model="search"></label>
   <table class="table table-striped table-bordered table-hover table-condensed">
     <thead>
       <td colspan="2">Business</td>
@@ -96,7 +97,7 @@
       <td>Actions</td>
     </thead>
     <tbody>
-      <tr ng-repeat="business in businesses" ng-include="getTemplate(business)">
+      <tr ng-repeat="business in businesses | filter:search" ng-include="getTemplate(business)">
         <script type="text/ng-template" id="display">
         <td>{{business.name}}<br>{{business.address}}<br>{{business.city}},&nbsp{{business.state}}&nbsp{{business.zip}}<br>lattitude:{{business.latitude}}<br>longitude:{{business.longitude}}</td>
         <td><b>Phone:&nbsp</b>{{business.phone}}<br><b>Website:&nbsp</b>{{business.url}}<br><b>Hours:&nbsp</b>{{business.hours}}<br><b>Notes:&nbsp</b>{{business.notes}}</td>

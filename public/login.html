@@ -1,12 +1,16 @@
 <!doctype html>
-<html>
+<html ng-app="cscApp">
 <head>
     <title>Node Authentication</title>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"> <!-- load bootstrap css -->
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"> <!-- load fontawesome -->
+    <!-- load angular and angular route via CDN -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular.min.js"></script>
+     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular-route.js"></script>
     <style>
         body        { padding-top:80px; }
     </style>
+    <script src="/controllers/main.js"></script>
 </head>
 <body>
 <div class="container" ng-controller="loginController">
@@ -25,7 +29,7 @@
             <input type="password" class="form-control" name="password"
             ng-model="login.password">
         </div>
-        <button class="btn btn-warning btn-lg" ng-click="loginUser(login)">Login</button>
+        <button class="btn btn-warning btn-lg" ng-click="loginUser()">Login</button>
     </form>
 
     <hr>

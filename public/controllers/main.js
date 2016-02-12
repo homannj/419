@@ -26,12 +26,17 @@ cscApp.config(function($routeProvider) {
 cscApp.controller('mainController', function($scope) {
 });
 
-cscApp.controller('loginController', function($scope, $http) {
+cscApp.controller('loginController', function($scope, $http,$window, $location) {
     $scope.loginUser = () => {
         console.log('loginUser');
-        $http.post(apiUrl + '/authenticate', $scope.email, $scope.password)
+        $scope.credentials = {
+            email: $scope.login.email,
+            password: $scope.login.password
+        };
+        $http.post(apiUrl + '/authenticate', $scope.credentials)
             .then((success) => {
-                $window.location.href = 'main.html/';
+                console.log('in success');
+                $window.location.href = '/main.html';
             });
     }
 });
@@ -200,12 +205,8 @@ cscApp.controller('categoryController', function($scope, $http) {
       }
       refresh();
       $scope.addReuse =  () => {
-          addItem(selectedNewReuse, newReuseItems);
-        console.log('in addReuse');
-        console.log($scope.newReuseItems);
-        $scope.newReuse.item = $scope.newReuseItems.slice(0);
         if (validate({name : $scope.newReuse}, $scope.reuseCategories, $scope.addReuseError) == true)
-          $http.post(apiUrl + '/reuseCategories', {name : $scope.newReuse}).then((success) => refresh());
+          $http.post(apiUrl + '/reuseCategories', {name : $scope.newReuse, item : $scope.newReuseItems}).then((success) => refresh());
       }
       $scope.updateReuse =  id => {
         if (validate($scope.selectedReuse, $scope.reuseCategories, $scope.editReuseError) == true)
@@ -228,10 +229,8 @@ cscApp.controller('categoryController', function($scope, $http) {
       };
       ////////////REPAIR///////////////
       $scope.addRepair =  () => {
-        console.log('in addRepair');
+        //console.log('in addRepair');
         console.log($scope.newRepairItems);
-        //$scope.newRepair.item = $scope.newRepairItems.slice(0);
-        //$scope.newRepair.item = $scope.addRepairItem.newRepairItems;
         if (validate({name : $scope.newRepair}, $scope.repairCategories, $scope.addRepairError) == true)
           $http.post(apiUrl + '/repairCategories', {name : $scope.newRepair, item : $scope.newRepairItems}).then((success) => refresh());
       }
@@ -323,9 +322,9 @@ cscApp.controller('userController', function($scope, $http) {
       $http.post(apiUrl + '/users', $scope.newUser).then((success) => refresh());
   }
   $scope.updateUser = () => {
-    $scope.selectedUser.email = $scope.editEmail;
-    $scope.selectedUser.password = $scope.editPassword;
-    $scope.selectedUser.isSuperAdmin = $scope.editIsSuperAdmin;
+    //$scope.selectedUser.email = $scope.editEmail;
+    //$scope.selectedUser.password = $scope.editPassword;
+    //$scope.selectedUser.isSuperAdmin = $scope.editIsSuperAdmin;
     console.log ('updating');
     console.log ($scope.selectedUser);
     //console.log($scope.editReuseCategories.slice(0));
