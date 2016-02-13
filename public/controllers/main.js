@@ -334,7 +334,7 @@ cscApp.controller('userController', function($scope, $http) {
         //if (validate($scope.selectedBusiness, $scope.invalid) == true)
           $http.put(apiUrl + '/users/'+$scope.selectedUser._id, $scope.selectedUser).then((success) => refresh());
   }
-  $scope.removeBusiness = id => {
+  $scope.removeUser = id => {
     console.log(id);
     $http.delete(apiUrl + '/users/'+id).then((success) => refresh());
     refresh();
