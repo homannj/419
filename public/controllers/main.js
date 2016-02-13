@@ -33,8 +33,9 @@ cscApp.controller('loginController', function($scope, $http,$window, $location) 
             email: $scope.login.email,
             password: $scope.login.password
         };
-        $http.post(apiUrl + '/authenticate', $scope.credentials)
+        $http.post(apiUrl + '/users/authenticate', $scope.credentials)
             .then((success) => {
+
                 console.log('in success');
                 $window.location.href = '/main.html';
             });
@@ -205,14 +206,16 @@ cscApp.controller('categoryController', function($scope, $http) {
       }
       refresh();
       $scope.addReuse =  () => {
+        //console.log('in addReuse');
+        console.log($scope.newReuseItems);
         if (validate({name : $scope.newReuse}, $scope.reuseCategories, $scope.addReuseError) == true)
           $http.post(apiUrl + '/reuseCategories', {name : $scope.newReuse, item : $scope.newReuseItems}).then((success) => refresh());
       }
-      $scope.updateReuse =  id => {
+      $scope.updateReuse = id => {
         if (validate($scope.selectedReuse, $scope.reuseCategories, $scope.editReuseError) == true)
           $http.put(apiUrl + '/reuseCategories/'+id, $scope.selectedReuse).then((success) => refresh());
       }
-      $scope.removeReuse =  id => {
+      $scope.removeReuse = id => {
         console.log(id);
         $http.delete(apiUrl + '/reuseCategories/'+id).then((success) => refresh());
         refresh();

@@ -99,7 +99,7 @@
     <tbody>
       <tr ng-repeat="business in businesses | filter:search" ng-include="getTemplate(business)">
         <script type="text/ng-template" id="display">
-        <td>{{business.name}}<br>{{business.address}}<br>{{business.city}},&nbsp{{business.state}}&nbsp{{business.zip}}<br>lattitude:{{business.latitude}}<br>longitude:{{business.longitude}}</td>
+        <td>{{business.name}}<br>{{business.address}}<br>{{business.city}},&nbsp{{business.state}}&nbsp{{business.zip}}</td>
         <td><b>Phone:&nbsp</b>{{business.phone}}<br><b>Website:&nbsp</b>{{business.url}}<br><b>Hours:&nbsp</b>{{business.hours}}<br><b>Notes:&nbsp</b>{{business.notes}}</td>
         <td><ul><li ng-repeat="reuse in business.reuseCategories">{{reuse}}</li></ul></td>
         <td><ul><li ng-repeat="reuse in business.repairCategories">{{reuse}}</li></ul></td>

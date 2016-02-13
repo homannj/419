@@ -7,6 +7,8 @@
     <div class = "panel">
         <label>Email:</label><input class="form-control" type="text"
         ng-model="newUser.email"><span class="errorText">{{invalidAdd.name}}</span>
+        <label>Password:</label><input class="form-control" type="password"
+        ng-model="newUser.password"><span class="errorText">{{invalidAdd.pasword}}</span>
         <label>SuperAdmin:</label>
         <input class="radio-inline" type="radio"ng-model="newUser.isSuperAdmin" ng-value="true">
             <label>Yes</label>
