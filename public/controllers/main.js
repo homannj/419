@@ -31,7 +31,7 @@ cscApp.controller('loginController', function($scope, $http,$window, $location) 
         console.log('loginUser');
         $scope.credentials = {
             email: $scope.login.email,
-            password: $scope.login.password
+            passwordHash: $scope.login.password
         };
         $http.post(apiUrl + '/users/authenticate', $scope.credentials)
             .then((success) => {
