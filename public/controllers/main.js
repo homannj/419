@@ -188,8 +188,11 @@ cscApp.controller('categoryController', function($scope, $http) {
         $http.get(apiUrl + '/reuseCategories').success( response => {
           $scope.reuseCategories = response;
           $scope.newReuse = "";
+          $scope.newReuseItem = "";
           $scope.newReuseItems= [];
           $scope.selectedReuse = {};
+          $scope.selectedReuseItem = "";
+          $scope.selectedReuseItems= [];
           $scope.addReuseError = {};
           $scope.editReuseError = {};
           console.log(response);
@@ -197,8 +200,11 @@ cscApp.controller('categoryController', function($scope, $http) {
         $http.get(apiUrl + '/repairCategories').success(response => {
           $scope.repairCategories = response;
           $scope.newRepair = "";
+          $scope.newRepairItem = "";
           $scope.newRepairItems= [];
           $scope.selectedRepair = {};
+          $scope.selectedRepairItem = "";
+          $scope.selectedRepairItems= [];
           $scope.addRepairError = {};
           $scope.editRepairError = {};
           console.log(response);
@@ -213,7 +219,8 @@ cscApp.controller('categoryController', function($scope, $http) {
       }
       $scope.updateReuse = id => {
         if (validate($scope.selectedReuse, $scope.reuseCategories, $scope.editReuseError) == true)
-          $http.put(apiUrl + '/reuseCategories/'+id, $scope.selectedReuse).then((success) => refresh());
+          //$http.put(apiUrl + '/reuseCategories/'+id, $scope.selectedReuse).then((success) => refresh());
+          $http.put(apiUrl + '/reuseCategories/'+id, {name : $scope.selectedReuse.name, item : $scope.selectedReuseItems}).then((success) => refresh());
       }
       $scope.removeReuse = id => {
         console.log(id);
@@ -228,6 +235,7 @@ cscApp.controller('categoryController', function($scope, $http) {
       $scope.editReuse =  reuse => {
         console.log('edit clicked');
         $scope.selectedReuse= angular.copy(reuse);
+        $scope.selectedReuseItems = $scope.selectedReuse.item.slice(0);;
         $scope.editReuseError = {};
       };
       ////////////REPAIR///////////////
@@ -239,7 +247,7 @@ cscApp.controller('categoryController', function($scope, $http) {
       }
       $scope.updateRepair = id => {
         if (validate($scope.selectedRepair, $scope.repairCategories, $scope.editRepairError) == true)
-          $http.put(apiUrl + '/repairCategories/'+id, $scope.selectedRepair).then((success) => refresh());
+          $http.put(apiUrl + '/repairCategories/'+id, {name : $scope.selectedRepair.name, item : $scope.selectedRepairItems}).then((success) => refresh());
       }
       $scope.removeRepair = id => {
         console.log(id);
@@ -253,6 +261,7 @@ cscApp.controller('categoryController', function($scope, $http) {
       $scope.editRepair =  repair => {
         console.log('edit clicked '+ repair.name);
           $scope.selectedRepair= angular.copy(repair);
+          $scope.selectedRepairItems = $scope.selectedRepair.item.slice(0);;
           console.log ($scope.selectedRepair.name);
       };
       function validate (item, collection, errorField) {
@@ -261,17 +270,18 @@ cscApp.controller('categoryController', function($scope, $http) {
           errorField.text = "Category cannot be blank";
           return false;
         }
-        for (let element of collection) {
-          console.log('item '+item.name +' '+element.name);
-          if (element.name == item.name) {
-            errorField.text = item.name + " is already in the list.";
-            return false;
-          }
-        }
+       // for (let element of collection) {
+       //   console.log('item '+item.name +' '+element.name);
+       //   if (element.name == item.name) {
+       //     errorField.text = item.name + " is already in the list.";
+       //     return false;
+       //   }
+       // }
         return true;
       }
     //$scope.addItem =  (newItem, collection) => {
-    $scope.addRepairItem =  (newItem, collection) => {
+    //$scope.addRepairItem =  (newItem, collection) => {
+    $scope.addItem =  (newItem, collection) => {
         console.log(newItem);
         console.log(collection);
         for (let item of collection)
@@ -325,9 +335,6 @@ cscApp.controller('userController', function($scope, $http) {
       $http.post(apiUrl + '/users', $scope.newUser).then((success) => refresh());
   }
   $scope.updateUser = () => {
-    //$scope.selectedUser.email = $scope.editEmail;
-    //$scope.selectedUser.password = $scope.editPassword;
-    //$scope.selectedUser.isSuperAdmin = $scope.editIsSuperAdmin;
     console.log ('updating');
     console.log ($scope.selectedUser);
     //console.log($scope.editReuseCategories.slice(0));
