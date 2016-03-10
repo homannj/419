@@ -88,13 +88,14 @@
 <div ng-hide="showAddPanel">
     <button  class="btn btn-info" ng-click="showAddPanel = true">Add A Business</button>
 </div>
+<br>
   <label>Filter<input ng-model="search"></label>
   <table class="table table-striped table-bordered table-hover table-condensed">
     <thead>
-      <td colspan="2">Business</td>
-      <td>Reuse</td>
-      <td>Repair</td>
-      <td>Actions</td>
+      <td class="text-center" colspan="2">Business</td>
+      <td class="text-center">Reuse</td>
+      <td class="text-center">Repair</td>
+      <td class="text-center">Actions</td>
     </thead>
     <tbody>
       <tr ng-repeat="business in businesses | filter:search" ng-include="getTemplate(business)">
@@ -102,8 +103,8 @@
         <td>{{business.name}}<br>{{business.address}}<br>{{business.city}},&nbsp{{business.state}}&nbsp{{business.zip}}</td>
         <td><b>Phone:&nbsp</b>{{business.phone}}<br><b>Website:&nbsp</b>{{business.url}}<br><b>Hours:&nbsp</b>{{business.hours}}<br><b>Notes:&nbsp</b>{{business.notes}}</td>
         <td><ul><li ng-repeat="reuse in business.reuseCategories">{{reuse}}</li></ul></td>
-        <td><ul><li ng-repeat="reuse in business.repairCategories">{{reuse}}</li></ul></td>
-        <td>
+        <td><ul class="list-unstyled"><li  ng-repeat="reuse in business.repairCategories">{{reuse}}</li></ul></td>
+        <td class="text-center">
           <button  class="btn btn-success" ng-click="editBusiness(business)">Edit</button>
           <button  class="btn btn-danger" ng-click="removeBusiness(business._id)">Delete</button>
         </td>

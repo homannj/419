@@ -7,19 +7,34 @@
   <div class="panel">
       <label>New Reuse Category:</label><input class="form-control" type="text" ng-model="newReuse">
       </br>
-      <label>Items:</label>
+      <div class="input-group">
       <input class="form-control" type="text"
       ng-model="newReuseItem" >
-      <button  class="btn btn-info" ng-click="addItem(newReuseItem,
-          newReuseItems)">Add Items</button>
+      <span class="input-group-btn">
+      <button  class="btn btn-info btn-default" type="button" ng-click="addItem(newReuseItem,
+          newReuseItems)">Add Items</button></span>
+  </div>
+      </br>
+      <div> Preview </div>
+      <ul>
+          Category Name: <span ng-bind="newReuse"></span>
+          <li ng-repeat="item in newReuseItems">
+          <text>{{item}}</text>
+          <button class="btn btn-danger btn-xs"
+              type="button" ng-click="removeItem(item,
+              newReuseItems)">Remove</button>
+          </li>
+      </ul>
+      </br>
+      </br>
       </br>
       <button ng-repeat="item in newReuseItems" class="btn btn-success btn-sm"
           type="button" ng-click="removeItem(item,
-          newReuseItems)">{{item}}</button>
+          newReuseItems)" title="Remove">{{item}}</button>
       </br>
       </br>
       </br>
-      <button  class="btn btn-info" ng-click="addReuse()">Add Category</button><span class="errorText">{{addReuseError.text}}</span>
+      <button  class="btn btn-info" ng-click="addReuse()">Save Category</button><span class="errorText">{{addReuseError.text}}</span>
   </div>
 <table class="table table-striped table-bordered table-hover table-condensed">
   <thead>

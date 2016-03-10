@@ -1,44 +1,22 @@
 "use strict";
 const cscApp = angular.module('cscApp', ['ngRoute']);
 const apiUrl = 'http://ec2-54-153-28-110.us-west-1.compute.amazonaws.com:3000/api';
-// configure our routes
+//const apiUrl = 'https://cs496-kevinto.c9.io:8080/api';
+
+// configure routes
 cscApp.config(function($routeProvider) {
     $routeProvider
       .when('/', {
           templateUrl : 'businesses.html',
           controller  : 'businessController'
-          //resolve: function($q, $location) {
-          //    var deferred = $q.defer();
-          //    deferred.resolve();
-          //    if (!isAuthenticated) {
-          //        $location.path('/login');
-          //    }
-          //    return deferred.promise;
-          //}
       })
       .when('/categories', {
           templateUrl : 'categories.html',
           controller  : 'categoryController'
-          //resolve: function($q, $location) {
-          //    var deferred = $q.defer();
-          //    deferred.resolve();
-          //    if (!isAuthenticated) {
-          //        $location.path('/login');
-          //    }
-          //    return deferred.promise;
-          //}
       })
       .when('/users', {
           templateUrl : 'users.html',
           controller  : 'userController'
-          //resolve: function($q, $location) {
-          //    var deferred = $q.defer();
-          //    deferred.resolve();
-          //    if (!isAuthenticated) {
-          //        $location.path('/login');
-          //    }
-          //    return deferred.promise;
-          //}
       })
       .when('/logout', {
           controller  : 'logoutController'
@@ -66,19 +44,16 @@ cscApp.controller('loginController', function($scope, $http, $window, $location)
         console.log('loginUser');
         $scope.credentials = {
             email: $scope.login.email,
-            passwordHash: $scope.login.password
+            passwordHash: $scope.login.passwordHash
         };
        
         $http.post(apiUrl + '/users/authenticate', $scope.credentials)
-            //.then((success) => {
             .then(function success(response) {
-                //console.log(response.data.userToken);
-                if(response.data.success === true){
-                    $window.localStorage.setItem('token', response.data.userToken);
+                if(response.data.success == true){
+                    $window.localStorage.setItem('token', response.data.token);
                     $window.location.href = '/main.html';
                 } else {
-                    $scope.invalidMessage = true;
-                    console.log('invalid');
+                    $scope.invalidMessage = true; console.log('invalid');
                 }
             });
     }
@@ -88,7 +63,7 @@ cscApp.controller('businessController', function($scope, $http, $location, $wind
   function init () {
       console.log('in init');
       if(typeof $window.localStorage.getItem('token') === 'undefined' || 
-          typeof $window.localStorage.getItem('token') === 'null') {
+          $window.localStorage.getItem('token') == 'null') {
           $window.location.href = '/login.html';
       }
     $http.get(apiUrl + '/reuseCategories').success(response => {
@@ -230,6 +205,10 @@ console.log(collection);
 
 cscApp.controller('categoryController', function($scope, $http, $location, $window) {
       let refresh = function () {
+          if(typeof $window.localStorage.getItem('token') === 'undefined' || 
+              $window.localStorage.getItem('token') == 'null') {
+              $window.location.href = '/login.html';
+          }
         $http.get(apiUrl + '/reuseCategories').success( response => {
           $scope.reuseCategories = response;
           $scope.newReuse = "";
@@ -260,29 +239,50 @@ cscApp.controller('categoryController', function($scope, $http, $location, $wind
         //console.log('in addReuse');
         console.log($scope.newReuseItems);
         if (validate({name : $scope.newReuse}, $scope.reuseCategories, $scope.addReuseError) == true)
-            $http.post(apiUrl + '/reuseCategories', 
-                    {name : $scope.newReuse, item : $scope.newReuseItems},
-                    config)
-            .then((success) => refresh());
-            //$http({
-            //    type: 'POST',
-            //    url: apiURL + '/reuseCategories',
-            //    data: {
-            //        name: $scope.newReuse,
-            //        item: $scope.newReuseItems,
-            //        
-            //
+      
+          var name = $scope.newReuse;
+          var item = $scope.newReuseItems;
+          $http({
+              method : 'POST',
+              url : apiUrl + '/reuseCategories',
+              headers : {
+                  'x-access-token' : $window.localStorage.getItem('token'),
+                  'Content-Type' : 'application/json'
+              },
+              data : {name, item}
+          }).then((success) => refresh());
       }
+      
       $scope.updateReuse = id => {
         if (validate($scope.selectedReuse, $scope.reuseCategories, $scope.editReuseError) == true)
-          //$http.put(apiUrl + '/reuseCategories/'+id, $scope.selectedReuse).then((success) => refresh());
-          $http.put(apiUrl + '/reuseCategories/'+id, {name : $scope.selectedReuse.name, item : $scope.selectedReuseItems}).then((success) => refresh());
+          //$http.put(apiUrl + '/reuseCategories/'+id, {name : $scope.selectedReuse.name, item : $scope.selectedReuseItems}).then((success) => refresh());
+          var name = $scope.selectedReuse.name;
+          var item = $scope.selectedReuseItems;
+          $http({
+              method : 'PUT',
+              url : apiUrl + '/reuseCategories/' + id,
+              headers : {
+                  'x-access-token' : $window.localStorage.getItem('token'),
+                  'Content-Type' : 'application/json'
+              },
+              data : {name, item}
+          }).then((success) => refresh());
       }
+      
       $scope.removeReuse = id => {
         console.log(id);
-        $http.delete(apiUrl + '/reuseCategories/'+id).then((success) => refresh());
-        refresh();
+        //$http.delete(apiUrl + '/reuseCategories/'+id).then((success) => refresh());
+          
+          $http({
+              method : 'DELETE',
+              url : apiUrl + '/reuseCategories/' + id,
+              headers : {
+                  'x-access-token' : $window.localStorage.getItem('token'),
+                  'Content-Type' : 'application/json'
+              },
+          }).then((success) => refresh());
       }
+      
       // gets the template to ng-include for a table row / item
       $scope.getReuseTemplate =  reuse => {
           if (reuse._id == $scope.selectedReuse._id) return 'edit';
@@ -299,16 +299,47 @@ cscApp.controller('categoryController', function($scope, $http, $location, $wind
         //console.log('in addRepair');
         console.log($scope.newRepairItems);
         if (validate({name : $scope.newRepair}, $scope.repairCategories, $scope.addRepairError) == true)
-          $http.post(apiUrl + '/repairCategories', {name : $scope.newRepair, item : $scope.newRepairItems}).then((success) => refresh());
+          //$http.post(apiUrl + '/repairCategories', {name : $scope.newRepair, item : $scope.newRepairItems}).then((success) => refresh());
+          var name = $scope.newRepair;
+          var item = $scope.newRepairItems;
+          $http({
+              method : 'POST',
+              url : apiUrl + '/repairCategories',
+              headers : {
+                  'x-access-token' : $window.localStorage.getItem('token'),
+                  'Content-Type' : 'application/json'
+              },
+              data : {name, item}
+          }).then((success) => refresh());
       }
+
       $scope.updateRepair = id => {
         if (validate($scope.selectedRepair, $scope.repairCategories, $scope.editRepairError) == true)
-          $http.put(apiUrl + '/repairCategories/'+id, {name : $scope.selectedRepair.name, item : $scope.selectedRepairItems}).then((success) => refresh());
+          //$http.put(apiUrl + '/repairCategories/'+id, {name : $scope.selectedRepair.name, item : $scope.selectedRepairItems}).then((success) => refresh());
+          var name = $scope.selectedRepair.name;
+          var item = $scope.selectedRepairItems;
+          $http({
+              method : 'PUT',
+              url : apiUrl + '/repairCategories/' + id,
+              headers : {
+                  'x-access-token' : $window.localStorage.getItem('token'),
+                  'Content-Type' : 'application/json'
+              },
+              data : {name, item}
+          }).then((success) => refresh());
       }
+
       $scope.removeRepair = id => {
         console.log(id);
-        $http.delete(apiUrl + '/repairCategories/'+id).then((success) => refresh());
-        refresh();
+        //$http.delete(apiUrl + '/repairCategories/'+id).then((success) => refresh());
+          $http({
+              method : 'DELETE',
+              url : apiUrl + '/repairCategories/' + id,
+              headers : {
+                  'x-access-token' : $window.localStorage.getItem('token'),
+                  'Content-Type' : 'application/json'
+              },
+          }).then((success) => refresh());
       }
       // gets the template to ng-include for a table row / item
       $scope.getRepairTemplate =  reuse => {
@@ -326,13 +357,6 @@ cscApp.controller('categoryController', function($scope, $http, $location, $wind
           errorField.text = "Category cannot be blank";
           return false;
         }
-       // for (let element of collection) {
-       //   console.log('item '+item.name +' '+element.name);
-       //   if (element.name == item.name) {
-       //     errorField.text = item.name + " is already in the list.";
-       //     return false;
-       //   }
-       // }
         return true;
       }
     //$scope.addItem =  (newItem, collection) => {
@@ -358,50 +382,91 @@ cscApp.controller('categoryController', function($scope, $http, $location, $wind
 });
 
 cscApp.controller('userController', function($scope, $http, $window, $location) {
-  function init () {
-    $http.get(apiUrl + '/users').success(response => {
-      $scope.users = response;
-      console.log(response);
-    });
-    $scope.newUser = [];
-    $scope.editUser = [];
-    $scope.showAddPanel = false;
-  }
+  //function init () {
+  //    if(typeof $window.localStorage.getItem('token') === 'undefined' || 
+  //        $window.localStorage.getItem('token') == 'null') {
+  //        $window.location.href = '/login.html';
+  //    }
+  //  $http.get(apiUrl + '/users').success(response => {
+  //    $scope.users = response;
+  //    console.log(response);
+  //  });
+  //  $scope.newUser = [];
+  //  $scope.editUser = [];
+  //  $scope.showAddPanel = false;
+  //}
   let refresh = () => {
-    $http.get(apiUrl + '/users').success((response)=>{
+      if(typeof $window.localStorage.getItem('token') === 'undefined' || 
+          $window.localStorage.getItem('token') == 'null') {
+          $window.location.href = '/login.html';
+      }
+      console.log('userRefresh');
+      $http.get(apiUrl + '/users').success((response)=>{
       $scope.users = response;
       $scope.clearNewUser();
       $scope.selectedUser = {};
       console.log(response);
     });
   }
-  init();
+  //init();
   refresh();
   $scope.addUser = () => {
     $scope.invalidAdd = {
       email : '',
-      password :'',
+      passwordHash :'',
       isSuperAdmin :'FALSE'
     }
-    //if (validate ($scope.newBusiness,$scope.invalidAdd) == true)
-      $http.post(apiUrl + '/users', $scope.newUser).then((success) => refresh());
+      //$http.post(apiUrl + '/users', $scope.newUser, config).then((success) => refresh());
+      var newUser = JSON.stringify($scope.newUser);
+      console.log($window.localStorage.getItem('token'));
+      console.log(newUser);
+      $http({
+          method : 'POST',
+          url : apiUrl + '/users',
+          headers : {
+              'x-access-token' : $window.localStorage.getItem('token'),
+              'Content-Type' : 'application/json'
+          },
+          data : newUser 
+      }).then((success) => refresh());
+
+      //$http(req);
   }
   $scope.updateUser = () => {
     console.log ('updating');
     console.log ($scope.selectedUser);
     //console.log($scope.editReuseCategories.slice(0));
         //if (validate($scope.selectedBusiness, $scope.invalid) == true)
-          $http.put(apiUrl + '/users/'+$scope.selectedUser._id, $scope.selectedUser).then((success) => refresh());
+          //$http.put(apiUrl + '/users/'+$scope.selectedUser._id, $scope.selectedUser).then((success) => refresh());
+          var userID = $scope.selectedUser._id;
+          var selectedUser = JSON.stringify($scope.selectedUser);
+          $http({
+              method : 'PUT',
+              url : apiUrl + '/users/' + userID,
+              headers : {
+                  'x-access-token' : $window.localStorage.getItem('token'),
+                  'Content-Type' : 'application/json'
+              },
+              data : selectedUser 
+          }).then((success) => refresh());
+
   }
   $scope.removeUser = id => {
     console.log(id);
-    $http.delete(apiUrl + '/users/'+id).then((success) => refresh());
-    refresh();
+    //$http.delete(apiUrl + '/users/'+id).then((success) => refresh());
+          $http({
+              method : 'DELETE',
+              url : apiUrl + '/users/' + id,
+              headers : {
+                  'x-access-token' : $window.localStorage.getItem('token'),
+                  'Content-Type' : 'application/json'
+              },
+          }).then((success) => refresh());
   }
   $scope.clearNewUser = () => {
     $scope.newUser = {
       email : "",
-      password : "",
+      passwordHash : "",
       isSuperAdmin : false,
     };
   }
@@ -414,7 +479,7 @@ cscApp.controller('userController', function($scope, $http, $window, $location) 
   $scope.editUser = user => {
     $scope.invalid = {
       email : "",
-      password : "",
+      passwordHash : "",
       isSuperAdmin : false,
     }
     console.log('edit clicked');
@@ -425,7 +490,7 @@ cscApp.controller('userController', function($scope, $http, $window, $location) 
       console.log('validating');
       console.log(user);
       errorMessage.email = '';
-      errorMessage.password = '';
+      errorMessage.passwordHash = '';
       errorMessage.isSuperAdmin = false; 
 
       let returnValue = true;
