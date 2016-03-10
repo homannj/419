@@ -18,6 +18,7 @@
     "connect-flash" : "~0.1.1",
     "bcrypt-nodejs" : "latest",
     "cors" : "2.7.1",
-    "node-geocoder": "3.6.2"
+    "node-geocoder": "3.6.2",
+    "jsonwebtoken": "^5.4.1"
   }
 }
