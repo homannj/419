@@ -7,16 +7,43 @@ cscApp.config(function($routeProvider) {
       .when('/', {
           templateUrl : 'businesses.html',
           controller  : 'businessController'
+          //resolve: function($q, $location) {
+          //    var deferred = $q.defer();
+          //    deferred.resolve();
+          //    if (!isAuthenticated) {
+          //        $location.path('/login');
+          //    }
+          //    return deferred.promise;
+          //}
       })
       .when('/categories', {
           templateUrl : 'categories.html',
           controller  : 'categoryController'
+          //resolve: function($q, $location) {
+          //    var deferred = $q.defer();
+          //    deferred.resolve();
+          //    if (!isAuthenticated) {
+          //        $location.path('/login');
+          //    }
+          //    return deferred.promise;
+          //}
       })
       .when('/users', {
           templateUrl : 'users.html',
           controller  : 'userController'
+          //resolve: function($q, $location) {
+          //    var deferred = $q.defer();
+          //    deferred.resolve();
+          //    if (!isAuthenticated) {
+          //        $location.path('/login');
+          //    }
+          //    return deferred.promise;
+          //}
       })
-      .when('/login', {
+      .when('/logout', {
+          controller  : 'logoutController'
+      })
+    .when('/login', {
           templateUrl : 'login.html',
           controller : 'loginController'
       })
@@ -26,26 +53,44 @@ cscApp.config(function($routeProvider) {
 cscApp.controller('mainController', function($scope) {
 });
 
-cscApp.controller('loginController', function($scope, $http,$window, $location) {
+cscApp.controller('logoutController', function($scope, $window, $location) {
+    $scope.logoutUser = () => {
+        console.log('in logoutuser');
+        $window.localStorage.setItem('token', null);
+        $window.location.href = '/login.html';
+    };
+});
+
+cscApp.controller('loginController', function($scope, $http, $window, $location) {
     $scope.loginUser = () => {
         console.log('loginUser');
         $scope.credentials = {
             email: $scope.login.email,
             passwordHash: $scope.login.password
         };
+       
         $http.post(apiUrl + '/users/authenticate', $scope.credentials)
-            .then((success) => {
-
-                console.log('in success');
-                $window.location.href = '/main.html';
+            //.then((success) => {
+            .then(function success(response) {
+                //console.log(response.data.userToken);
+                if(response.data.success === true){
+                    $window.localStorage.setItem('token', response.data.userToken);
+                    $window.location.href = '/main.html';
+                } else {
+                    $scope.invalidMessage = true;
+                    console.log('invalid');
+                }
             });
     }
 });
 
-
-cscApp.controller('businessController', function($scope, $http) {
+cscApp.controller('businessController', function($scope, $http, $location, $window) {
   function init () {
       console.log('in init');
+      if(typeof $window.localStorage.getItem('token') === 'undefined' || 
+          typeof $window.localStorage.getItem('token') === 'null') {
+          $window.location.href = '/login.html';
+      }
     $http.get(apiUrl + '/reuseCategories').success(response => {
       $scope.categories = response;
       console.log(response);
@@ -183,7 +228,7 @@ console.log(collection);
   }
 });
 
-cscApp.controller('categoryController', function($scope, $http) {
+cscApp.controller('categoryController', function($scope, $http, $location, $window) {
       let refresh = function () {
         $http.get(apiUrl + '/reuseCategories').success( response => {
           $scope.reuseCategories = response;
@@ -215,7 +260,18 @@ cscApp.controller('categoryController', function($scope, $http) {
         //console.log('in addReuse');
         console.log($scope.newReuseItems);
         if (validate({name : $scope.newReuse}, $scope.reuseCategories, $scope.addReuseError) == true)
-          $http.post(apiUrl + '/reuseCategories', {name : $scope.newReuse, item : $scope.newReuseItems}).then((success) => refresh());
+            $http.post(apiUrl + '/reuseCategories', 
+                    {name : $scope.newReuse, item : $scope.newReuseItems},
+                    config)
+            .then((success) => refresh());
+            //$http({
+            //    type: 'POST',
+            //    url: apiURL + '/reuseCategories',
+            //    data: {
+            //        name: $scope.newReuse,
+            //        item: $scope.newReuseItems,
+            //        
+            //
       }
       $scope.updateReuse = id => {
         if (validate($scope.selectedReuse, $scope.reuseCategories, $scope.editReuseError) == true)
@@ -301,10 +357,8 @@ cscApp.controller('categoryController', function($scope, $http) {
     }
 });
 
-cscApp.controller('userController', function($scope, $http) {
-    console.log("in controller");
+cscApp.controller('userController', function($scope, $http, $window, $location) {
   function init () {
-      console.log('in init');
     $http.get(apiUrl + '/users').success(response => {
       $scope.users = response;
       console.log(response);
@@ -314,7 +368,6 @@ cscApp.controller('userController', function($scope, $http) {
     $scope.showAddPanel = false;
   }
   let refresh = () => {
-      console.log('in refresh');
     $http.get(apiUrl + '/users').success((response)=>{
       $scope.users = response;
       $scope.clearNewUser();
@@ -325,7 +378,6 @@ cscApp.controller('userController', function($scope, $http) {
   init();
   refresh();
   $scope.addUser = () => {
-    console.log('addUser');
     $scope.invalidAdd = {
       email : '',
       password :'',
@@ -381,11 +433,6 @@ cscApp.controller('userController', function($scope, $http) {
         errorMessage.email = 'Email cannot be blank.';
         returnValue = false;
       }
-      //const url = /http?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/
-      //if(url.test(business.website) == false){
-      //  errorMessage.website = 'Must be a valid url beginning with http://';
-      //  returnValue = false;
-      //}
       for (let u of $scope.users) {
         if (user._id == u._id)
           continue;
@@ -396,25 +443,6 @@ cscApp.controller('userController', function($scope, $http) {
       }
       return returnValue;
   }
-
-  //$scope.addCategory =  (selected, collection) => {
-  //  console.log(selected);
-  //  console.log(collection);
-  //      for (let item of collection)
-  //        if (item == selected)
-  //          return;
-  //      collection.push (selected);
-  //      console.log(collection);
-  //}
-  //$scope.removeCategory = (selected, collection) => {
-  //  for(let i = 0; i < collection.length; i++) {
-  //      if(collection[i] == selected) {
-  //          collection.splice(i, 1);
-  //          break;
-  //      }
-  //  }
-  //  console.log(collection);
-  //}
 });
 
 
