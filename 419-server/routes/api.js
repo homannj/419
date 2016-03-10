@@ -3,6 +3,7 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt-nodejs');
+var jwt = require('jsonwebtoken');
 
 // Models
 const ReuseCategories = require('../models/reuseCategories');
@@ -53,24 +54,13 @@ Users.route('authenticate.post', function(req, res, next) {
           res.json({success: false, message: 'Authentication failed. Wrong password.'})
         } 
         else {
-          // var token = jwt.sign(user.userId, app.get('secret'), {
-          // expiresIn: "24h" // expires in 24 hours
-          // });
-          
-          // For debugging 
-          // console.log("token: " + token);
-          // var decoded = jwt.decode(token);
-          // console.log("decodedtoken: " + decoded);
-          // res.json(decoded);
-          
-          // res.json({
-          //   success: true,
-          //   message: 'Enjoy your token!',
-          //   token: token
-          // });
-          // return;
-          // console.log(user.generateHash("blah"));
-          res.json({success: true, userToken: ''});
+          var token = jwt.sign({ email: user.email }, "cs419", { expiresIn: '24h'});
+         
+          res.json({
+            success: true,
+            message: 'Enjoy your token!',
+            token: token
+          });
           return;
         }
       }
