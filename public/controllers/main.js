@@ -100,8 +100,18 @@ cscApp.controller('businessController', function($scope, $http, $location, $wind
       website :''
     }
     //if (validate ($scope.newBusiness,$scope.invalidAdd) == true)
-      $http.post(apiUrl + '/businesses', $scope.newBusiness).then((success) => refresh());
-  }
+ //     $http.post(apiUrl + '/businesses', $scope.newBusiness).then((success) => refresh());
+  
+          var newBusiness = JSON.stringify($scope.newBusiness);
+          $http({ method : 'POST',
+              url : apiUrl + '/businesses',
+              headers : {
+                  'x-access-token' : $window.localStorage.getItem('token'),
+                  'Content-Type' : 'application/json'
+              },
+              data : newBusiness
+          }).then((success) => refresh());
+ }
   $scope.updateBusiness = () => {
     $scope.selectedBusiness.reuseCategories = $scope.editReuseCategories.slice(0);
     $scope.selectedBusiness.repairCategories = $scope.editRepairCategories.slice(0);
@@ -109,12 +119,35 @@ cscApp.controller('businessController', function($scope, $http, $location, $wind
     console.log ($scope.selectedBusiness);
     console.log($scope.editReuseCategories.slice(0));
         //if (validate($scope.selectedBusiness, $scope.invalid) == true)
-          $http.put(apiUrl + '/businesses/'+$scope.selectedBusiness._id, $scope.selectedBusiness).then((success) => refresh());
-  }
+          //$http.put(apiUrl + '/businesses/'+$scope.selectedBusiness._id, $scope.selectedBusiness).then((success) => refresh());
+          var selectedBusiness = JSON.stringify($scope.selectedBusiness);
+          //var selectedBusiness = $scope.selectedBusiness;
+          console.log('1');
+          console.log(selectedBusiness);
+          console.log('1');
+          var id = $scope.selectedBusiness._id;
+          $http({
+              method : 'PUT',
+              url : apiUrl + '/businesses/' + id,
+              headers : {
+                  'x-access-token' : $window.localStorage.getItem('token'),
+                  'Content-Type' : 'application/json'
+              },
+              data : selectedBusiness
+          }).then((success) => refresh());
+ }
   $scope.removeBusiness = id => {
     console.log(id);
-    $http.delete(apiUrl + '/businesses/'+id).then((success) => refresh());
-    refresh();
+    //$http.delete(apiUrl + '/businesses/'+id).then((success) => refresh());
+           $http({
+              method : 'DELETE',
+              url : apiUrl + '/businesses/' + id,
+              headers : {
+                  'x-access-token' : $window.localStorage.getItem('token'),
+                  'Content-Type' : 'application/json'
+              },
+          }).then((success) => refresh());
+    //refresh();
   }
   $scope.clearNewBusiness = () => {
     $scope.newBusiness = {
